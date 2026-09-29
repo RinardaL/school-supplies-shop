@@ -131,7 +131,7 @@ export default function Storefront() {
 
             <section className="features">
               <Feature ico="🚚" title="Free delivery over €30" sub="2 working days, all of Kosovo" />
-              <Feature ico="↩" title="30-day returns" sub="Unused items, no questions" />
+              <Feature ico="↩" title="10-day returns" sub="Unused items, no questions" />
               <Feature ico="💶" title="Pay on delivery" sub="No card or account needed" />
               <Feature ico="☎" title="Support Mon–Sat" sub="08:00–18:00, +383 44 000 000" />
             </section>
