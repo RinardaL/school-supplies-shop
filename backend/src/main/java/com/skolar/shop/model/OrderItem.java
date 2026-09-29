@@ -37,7 +37,7 @@ public class OrderItem {
         this.product = product;
         this.productName = product.getName();
         this.quantity = quantity;
-        this.unitPrice = product.getPrice();
+        this.unitPrice = product.getSalePrice(); // the discounted price at purchase time
     }
 
     public BigDecimal getLineTotal() {

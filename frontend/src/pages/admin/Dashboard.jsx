@@ -26,6 +26,7 @@ export default function Dashboard() {
 
       <div className="stats">
         <div className="stat"><div className="k">Products</div><div className="v">{stats?.products ?? "–"}</div></div>
+        <div className="stat"><div className="k">On offer</div><div className="v">{stats?.onOffer ?? "–"}</div></div>
         <div className="stat"><div className="k">Low stock (≤ 5)</div><div className={`v ${stats?.lowStock ? "warn" : ""}`}>{stats?.lowStock ?? "–"}</div></div>
         <div className="stat"><div className="k">New orders</div><div className="v">{stats?.newOrders ?? "–"}</div></div>
         <div className="stat"><div className="k">Revenue</div><div className="v">{stats ? money(stats.revenue) : "–"}</div></div>

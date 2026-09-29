@@ -35,6 +35,7 @@ public class AdminController {
         return Map.of(
                 "products", products.count(),
                 "lowStock", products.countByStockLessThanEqual(5),
+                "onOffer", products.countByDiscountPercentGreaterThan(0),
                 "orders", orders.count(),
                 "newOrders", orders.countByStatus(CustomerOrder.Status.NEW),
                 "revenue", orders.revenue());

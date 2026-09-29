@@ -5,7 +5,7 @@ import { Field } from "../Storefront.jsx";
 
 const COLORS = ["#E0E7FF", "#FDE68A", "#BBF7D0", "#FBCFE8", "#BFDBFE", "#FED7AA", "#D9F99D", "#E9D5FF", "#FECACA", "#A7F3D0", "#CCFBF1", "#FEF3C7"];
 
-const empty = () => ({ name: "", description: "", price: "", stock: "", emoji: "📦", color: COLORS[0], imageUrl: "", featured: false, categoryId: "" });
+const empty = () => ({ name: "", description: "", price: "", stock: "", emoji: "📦", color: COLORS[0], imageUrl: "", featured: false, discountPercent: 0, categoryId: "" });
 
 export default function Products() {
   const [products, setProducts] = useState([]);
@@ -27,7 +27,7 @@ export default function Products() {
   const openEdit = (p) => {
     setForm({
       name: p.name, description: p.description || "", price: p.price, stock: p.stock, emoji: p.emoji || "📦",
-      color: p.color || COLORS[0], imageUrl: p.imageUrl || "", featured: !!p.featured, categoryId: p.category?.id || "",
+      color: p.color || COLORS[0], imageUrl: p.imageUrl || "", featured: !!p.featured, discountPercent: p.discountPercent || 0, categoryId: p.category?.id || "",
     });
     setErrors({});
     setEditing(p);
@@ -38,7 +38,7 @@ export default function Products() {
     e.preventDefault();
     setBusy(true);
     setErrors({});
-    const body = { ...form, price: Number(form.price), stock: Number(form.stock), categoryId: form.categoryId ? Number(form.categoryId) : null };
+    const body = { ...form, price: Number(form.price), stock: Number(form.stock), discountPercent: Number(form.discountPercent) || 0, categoryId: form.categoryId ? Number(form.categoryId) : null };
     try {
       if (editing.id) {
         await api(`/products/${editing.id}`, { method: "PUT", body, admin: true });
@@ -82,9 +82,9 @@ export default function Products() {
 
       <div className="panel table-wrap">
         <table className="table">
-          <thead><tr><th>Product</th><th>Category</th><th>Price</th><th>Stock</th><th>Featured</th><th></th></tr></thead>
+          <thead><tr><th>Product</th><th>Category</th><th>Price</th><th>Offer</th><th>Stock</th><th>Featured</th><th></th></tr></thead>
           <tbody>
-            {filtered.length === 0 && <tr><td colSpan="6" className="muted">No products.</td></tr>}
+            {filtered.length === 0 && <tr><td colSpan="7" className="muted">No products.</td></tr>}
             {filtered.map((p) => (
               <tr key={p.id}>
                 <td>
@@ -94,7 +94,8 @@ export default function Products() {
                   </div>
                 </td>
                 <td>{p.category?.name || <span className="muted">–</span>}</td>
-                <td>{money(p.price)}</td>
+                <td>{p.discountPercent > 0 ? <><strong style={{ color: "var(--sale)" }}>{money(p.salePrice)}</strong> <span className="muted" style={{ textDecoration: "line-through", fontSize: ".8rem" }}>{money(p.price)}</span></> : money(p.price)}</td>
+                <td>{p.discountPercent > 0 ? <span className="badge sale">-{p.discountPercent}%</span> : <span className="muted">–</span>}</td>
                 <td><span className={`badge ${p.stock === 0 ? "danger" : p.stock <= 5 ? "warn" : "muted"}`}>{p.stock}</span></td>
                 <td>{p.featured ? "⭐" : ""}</td>
                 <td>
@@ -118,6 +119,7 @@ export default function Products() {
               <Field label="Price (€)" error={errors.price}><input className="input" type="number" step="0.01" min="0" value={form.price} onChange={set("price")} required /></Field>
               <Field label="Stock" error={errors.stock}><input className="input" type="number" min="0" value={form.stock} onChange={set("stock")} required /></Field>
             </div>
+            <Field label="Offer: discount in % (0 = no offer)" error={errors.discountPercent}><input className="input" type="number" min="0" max="90" value={form.discountPercent} onChange={set("discountPercent")} /></Field>
             <div className="grid-2">
               <Field label="Category">
                 <select className="select" value={form.categoryId} onChange={set("categoryId")}>

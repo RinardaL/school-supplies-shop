@@ -36,6 +36,10 @@ public class Product {
 
     private boolean featured;
 
+    /** 0 = no offer. 20 = 20% off; the sale price is computed from it. */
+    @Column(nullable = false)
+    private int discountPercent = 0;
+
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "category_id")
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
@@ -63,6 +67,17 @@ public class Product {
     public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
     public boolean isFeatured() { return featured; }
     public void setFeatured(boolean featured) { this.featured = featured; }
+    public int getDiscountPercent() { return discountPercent; }
+    public void setDiscountPercent(int discountPercent) { this.discountPercent = discountPercent; }
+
+    /** Price after the discount, rounded to cents. Serialised as "salePrice". */
+    public BigDecimal getSalePrice() {
+        if (price == null) return null;
+        if (discountPercent <= 0) return price;
+        BigDecimal factor = BigDecimal.valueOf(100 - discountPercent).movePointLeft(2);
+        return price.multiply(factor).setScale(2, java.math.RoundingMode.HALF_UP);
+    }
+    public boolean isOnOffer() { return discountPercent > 0; }
     public Category getCategory() { return category; }
     public void setCategory(Category category) { this.category = category; }
     public Instant getCreatedAt() { return createdAt; }

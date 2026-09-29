@@ -44,7 +44,7 @@ export function CartProvider({ children }) {
     const remove = (productId) => setItems((list) => list.filter((i) => i.product.id !== productId));
     const clear = () => setItems([]);
     const count = items.reduce((n, i) => n + i.qty, 0);
-    const total = items.reduce((n, i) => n + i.qty * Number(i.product.price), 0);
+    const total = items.reduce((n, i) => n + i.qty * Number(i.product.salePrice ?? i.product.price), 0);
     return { items, add, setQty, remove, clear, count, total, open, setOpen };
   }, [items, open]);
 

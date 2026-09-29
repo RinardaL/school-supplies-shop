@@ -20,6 +20,7 @@ public final class Dtos {
             @Size(max = 16) String color,
             @Size(max = 500) String imageUrl,
             Boolean featured,
+            @Min(0) @Max(90) Integer discountPercent,
             Long categoryId) {}
 
     public record CategoryRequest(

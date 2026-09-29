@@ -23,13 +23,14 @@ public class ProductController {
         this.categories = categories;
     }
 
-    /** Public: list products, optionally filtered by category slug and search text. */
+    /** Public: list products, optionally filtered by category slug, search text and offers only. */
     @GetMapping
     public List<Product> list(@RequestParam(required = false) String category,
-                              @RequestParam(required = false) String q) {
+                              @RequestParam(required = false) String q,
+                              @RequestParam(required = false, defaultValue = "false") boolean offers) {
         String slug = (category == null || category.isBlank()) ? null : category;
         String term = (q == null || q.isBlank()) ? null : q.trim();
-        return products.search(slug, term);
+        return products.search(slug, term, offers);
     }
 
     @GetMapping("/{id}")
@@ -68,6 +69,7 @@ public class ProductController {
         p.setColor(req.color() == null || req.color().isBlank() ? "#E0E7FF" : req.color());
         p.setImageUrl(req.imageUrl() == null || req.imageUrl().isBlank() ? null : req.imageUrl().trim());
         p.setFeatured(Boolean.TRUE.equals(req.featured()));
+        p.setDiscountPercent(req.discountPercent() == null ? 0 : req.discountPercent());
         if (req.categoryId() != null) {
             Category c = categories.findById(req.categoryId())
                     .orElseThrow(() -> new ApiExceptionHandler.BadRequest("Category not found"));
